@@ -1,15 +1,26 @@
 import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import createError from 'http-errors';
+import logger from 'morgan';
+import booksRouter from './routes/books';
+import { PORT, HOST, API_VERSION } from './config';
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server');
+  res.send(`Library API ${API_VERSION} is running`);
 });
 
-app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+app.use('/books', booksRouter);
+
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  next(createError(404));
+});
+
+app.listen(PORT, HOST, () => {
+  console.log(`[server]: Server is running at http://${HOST}:${PORT}`);
 });
