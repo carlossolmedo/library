@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import createError from 'http-errors';
 import logger from 'morgan';
-import booksRouter from './routes/books';
+import booksRouter from './routes/books.route';
 import { PORT, HOST, API_VERSION } from './config';
 
 const app: Express = express();
