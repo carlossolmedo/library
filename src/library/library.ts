@@ -47,9 +47,10 @@ export class Library {
   async updateBookById(id: string, book: TUpdateBook) {
     try {
       /**
-       * TODO: allow only some values to be updated
+       * TODO: allow only some values to be updated with mongoose
        * @see https://mongoosejs.com/docs/validation.html#the-select-option
        */
+      if (!isValidToUpdate(book)) throw new Error('Invalid update values');
       return await Book.findByIdAndUpdate(id, book, { new: true });
     } catch (error) {
       console.log(error);
@@ -62,5 +63,13 @@ export class Library {
     } catch (error) {
       console.log(error);
     }
+  }
+}
+
+function isValidToUpdate(updateBook: { [key: string]: any }) {
+  const allowedFields = ['title', 'author', 'pubDate'];
+  const updateFields = Object.keys(updateBook);
+  if (updateFields.length > 1) {
+    return updateFields.every((field) => allowedFields.includes(field));
   }
 }

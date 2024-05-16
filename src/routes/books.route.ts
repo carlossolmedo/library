@@ -44,7 +44,11 @@ router.post('/create', async (req, res) => {
 router.put('/update/:id', async (req, res) => {
   try {
     const result = await alexandria.updateBookById(req.params.id, req.body);
-    res.status(200).json(result);
+    if (result) {
+      res.status(200).json(result);
+    } else {
+      res.status(400).json({ message: 'Invalid update values' });
+    }
   } catch (error) {
     res.status(500).json(error);
   }
