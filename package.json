@@ -4,8 +4,7 @@
   "description": "API to manage a Library",
   "main": "src/main.ts",
   "scripts": {
-    "build": "npx tsc",
-    "start": "node dist/src/main.js",
+    "start": "npx tsc && node dist/src/main.js",
     "dev": "nodemon src/main.ts",
     "test": "jest",
     "test:watch": "jest --watch"

@@ -12,4 +12,4 @@ npm run test
 
 ## API Documentation
 
-Go to : `http://localhost:3000/api-docs/`
+Go to : `http://localhost:3000/api-docs/` open the route section and try it out

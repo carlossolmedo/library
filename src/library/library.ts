@@ -13,8 +13,12 @@ export class Library {
       if (this.inputDatabase.type !== 'mongodb') throw new Error('Invalid database type');
       const URI = `mongodb+srv://${this.inputDatabase.username}:${this.inputDatabase.password}@${this.inputDatabase.host}/${this.inputDatabase.database}?retryWrites=true&w=majority&appName=ClusterDev0`;
       await mongoose.connect(URI, { maxPoolSize: 10 }).then(() => console.log(`[${this.inputDatabase.type}] database : '${this.inputDatabase.database}' connection established`));
-      // FIXME: This approach allow the multiple connection
-      // await mongoose.createConnection(URI, { maxPoolSize: 10 }).asPromise().then(() => console.log(`[${this.inputDatabase.type}] database : '${this.inputDatabase.database}' connection established`));
+
+      /**
+       * TODO: Allow multiple connection
+       * @see https://mongoosejs.com/docs/connections.html#multiple_connections
+       * await mongoose.createConnection(URI, { maxPoolSize: 10 }).asPromise().then(() => console.log(`[${this.inputDatabase.type}] database : '${this.inputDatabase.database}' connection established`));
+       */
     } catch (error) {
       console.log(error);
     }

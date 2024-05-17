@@ -10,14 +10,19 @@ const app: Express = express();
 
 const options = {
   swaggerDefinition: {
-    openapi: '3.0.0', // Assuming OpenAPI 3.0
+    openapi: '3.0.0',
     info: {
       title: 'Library API',
-      version: '1.0.0',
+      version: `${API_VERSION}`,
       description: 'API to manage Library',
     },
+    servers: [
+      {
+        url: `http://${HOST}:${PORT}`,
+      },
+    ]
   },
-  apis: ['./routes/books.route.ts']
+  apis: ['./src/routes/*.ts'],
 };
 
 const specs = swaggerJsdoc(options);
