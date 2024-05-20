@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { TBook } from 'src/types/library.type';
+import { TBook } from '../utils/types';
 
 const pageObjectSchema = new mongoose.Schema({
   page: { type: Number, required: true },

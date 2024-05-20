@@ -1,6 +1,5 @@
 import express from 'express';
-import Book from '../models/book.model';
-import { Library } from '../library/library';
+import { Library } from '../service/library';
 import { dbCredentials } from '../config';
 const router = express.Router();
 
@@ -168,6 +167,29 @@ router.delete('/delete/:id', async (req, res) => {
   try {
     const result = await alexandria.deleteBookById(req.params.id);
     res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+/**
+ * @swagger
+ * /books/imports:
+ *   get:
+ *     summary: Launch the import of books
+ *     tags: [Books]
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           text/plain:
+ *             example:
+ *              Import launched
+ */
+router.get('/imports', async (req, res) => {
+  try {
+    await alexandria.importBooks();
+    res.status(200).send('Import launched');
   } catch (error) {
     res.status(500).json(error);
   }
