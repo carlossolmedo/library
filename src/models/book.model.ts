@@ -9,7 +9,7 @@ const pageObjectSchema = new mongoose.Schema({
 const bookSchema = new mongoose.Schema({
   title: { type: String, required: true },
   author: { type: String, required: true },
-  pubDate: { type: Date, required: true },
+  pubDate: { type: String, required: true },
   pages: [{ type: pageObjectSchema }],
 });
 

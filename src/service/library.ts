@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 import fs from 'fs';
 import { InputDatabase, TBook, TUpdateBook } from '../utils/types';
 import Book from '../models/book.model';
-import path from 'path';
 
 export class Library {
 
@@ -22,7 +21,7 @@ export class Library {
        * await mongoose.createConnection(URI, { maxPoolSize: 10 }).asPromise().then(() => console.log(`[${this.inputDatabase.type}] database : '${this.inputDatabase.database}' connection established`));
        */
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -38,7 +37,7 @@ export class Library {
       });
       return result;
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -46,7 +45,7 @@ export class Library {
     try {
       return await Book.create(book);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -59,7 +58,7 @@ export class Library {
       if (!isValidToUpdate(book)) throw new Error('Invalid update values');
       return await Book.findByIdAndUpdate(id, book, { new: true });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -67,7 +66,7 @@ export class Library {
     try {
       return await Book.findByIdAndDelete(id);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -100,6 +99,14 @@ export class Library {
       });
     });
   }
+
+  async filterBooks(filter: object) {
+    try {
+      return await Book.find(filter).exec();
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }
 
 function isValidToUpdate(updateBook: { [key: string]: any }) {
@@ -111,12 +118,6 @@ function isValidToUpdate(updateBook: { [key: string]: any }) {
 }
 
 function extractLinesFromFile(pathToFile: string) {
-  const bookLines: any = {
-    title: '',
-    author: '',
-    pubDate: '',
-    pages: [],
-  };
 
   fs.readFile(pathToFile, 'utf8', async (err, data) => {
     if (err) {
@@ -124,11 +125,17 @@ function extractLinesFromFile(pathToFile: string) {
       return;
     }
 
+    const bookLines: any = {
+      title: '',
+      author: '',
+      pubDate: '',
+      pages: [],
+    };
+
     // Extract title, author and pubDate
     if (pathToFile.endsWith('1.txt')) {
       const keywords = ['Project Gutenberg eBook of ', 'Author:', 'Release date:'];
       const lines = data.split('\n');
-
 
       for (const keyword of keywords) {
         const keywordLine = lines.find(line => line.startsWith(keyword));
@@ -136,34 +143,31 @@ function extractLinesFromFile(pathToFile: string) {
           keyword === keywords[0] ? bookLines.title = keywordLine.slice(keyword.length).trim() : '';
           keyword === keywords[1] ? bookLines.author = keywordLine.slice(keyword.length).trim() : '';
           keyword === keywords[2] ? bookLines.pubDate = keywordLine.slice(keyword.length).trim() : '';
-          console.log(`Extracted ${keyword}: ${bookLines}`);
+          console.log(`Extracted ${keyword}: ${keywordLine.slice(keyword.length).trim()}`);
         } else {
           console.log('Keyword not found in the file');
         }
       }
-
-    } else {
-
-      // Extract pages
-      const pages: any = [];
-      const regex = /\/(\d+)\.txt$/; // Match number of page
-      const match = pathToFile.match(regex);
-      const numberOfPage = match ? match[1] : null;
-      console.log('number of page: ', numberOfPage);
-      if (numberOfPage) {
-        pages.push({ page: numberOfPage, contentPage: data });
-      }
-      bookLines.pages = pages;
     }
+
+    // Extract pages
+    const pages: any = [];
+    const regex = /\/(\d+)\.txt$/; // Match number of page
+    const match = pathToFile.match(regex);
+    const numberOfPage = match ? match[1] : null;
+
+    if (numberOfPage) {
+      pages.push({ page: numberOfPage, contentPage: data });
+    }
+    bookLines.pages = pages;
+
     console.log('bookLines: ', bookLines);
 
     // TODO: Save Book in database
-    // try {
-    //   await Book.create(bookLines);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      await Book.create(bookLines);
+    } catch (error) {
+      console.error(error);
+    }
   });
-
-
 }
