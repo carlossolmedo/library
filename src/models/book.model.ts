@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { TBook } from 'src/types/library.type';
+import { TBook } from '../utils/types';
 
 const pageObjectSchema = new mongoose.Schema({
   page: { type: Number, required: true },
@@ -9,7 +9,7 @@ const pageObjectSchema = new mongoose.Schema({
 const bookSchema = new mongoose.Schema({
   title: { type: String, required: true },
   author: { type: String, required: true },
-  pubDate: { type: Date, required: true },
+  pubDate: { type: String, required: true },
   pages: [{ type: pageObjectSchema }],
 });
 

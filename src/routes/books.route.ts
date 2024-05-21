@@ -1,6 +1,5 @@
 import express from 'express';
-import Book from '../models/book.model';
-import { Library } from '../library/library';
+import { Library } from '../service/library';
 import { dbCredentials } from '../config';
 const router = express.Router();
 
@@ -172,5 +171,75 @@ router.delete('/delete/:id', async (req, res) => {
     res.status(500).json(error);
   }
 });
+
+/**
+ * @swagger
+ * /books/imports:
+ *   get:
+ *     summary: Launch the import of books
+ *     tags: [Books]
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *         content:
+ *           text/plain:
+ *             example:
+ *              Import launched
+ */
+router.get('/imports', async (req, res) => {
+  try {
+    await alexandria.importBooks();
+    res.status(200).send('Import launched');
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+/**
+ * @swagger
+ * /books/findByFilter:
+ *   get:
+ *     summary: Filter books
+ *     tags: [Books]
+ *     operationId: findByFilter
+ *     parameters:
+ *       - name: filter
+ *         in: query
+ *         description: Values that need to be considered for filter
+ *         required: false
+ *         explode: true
+ *         schema:
+ *           type: string
+ *           default: author
+ *           enum:
+ *             - title
+ *             - author
+ *             - pubDate
+ *       - name: value
+ *         in: query
+ *         description: Value of filter
+ *         required: false
+ *     responses:
+ *       200:
+ *         description: Successful response
+ */
+
+router.get('/findByFilter', async (req, res) => {
+  try {
+    if (req.query.filter && req.query.value) {
+      const { filter, value } = req.query;
+      const filterObj = {
+        [filter.toString()]: value
+      }
+      const result = await alexandria.filterBooks(filterObj);
+      res.status(200).json(result);
+    } else {
+      res.status(400).send('values for filter and value were required');
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 
 export default router;

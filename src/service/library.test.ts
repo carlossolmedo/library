@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import Book from '../models/book.model';
-import { InputDatabase } from '../types/library.type';
+import { InputDatabase, TBook } from '../utils/types';
 import { Library } from './library';
 
 describe('Library tests suite', () => {
@@ -14,16 +14,26 @@ describe('Library tests suite', () => {
     database: 'test'
   };
 
-  const fakeResult = [
+  const fakeResult: TBook[] = [
     {
-      id: '1',
       title: 'Book 1',
-      pubDate: '2022-01-01',
+      author: 'Author 1',
+      pubDate: new Date('2024-05-01'),
+      pages: [
+        { page: 1, contentPage: "Book 1 content page 1" },
+        { page: 2, contentPage: "Book 1 content page 2" },
+        { page: 3, contentPage: "Book 1 content page 3" }
+      ]
     },
     {
-      id: '2',
       title: 'Book 2',
-      pubDate: '2022-02-01',
+      author: 'Author 2',
+      pubDate: new Date('2024-05-01'),
+      pages: [
+        { page: 1, contentPage: "Book 2 content page 1" },
+        { page: 2, contentPage: "Book 2 content page 2" },
+        { page: 3, contentPage: "Book 2 content page 3" }
+      ]
     },
   ];
 
